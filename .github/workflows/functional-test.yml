@@ -16,6 +16,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '12.x'
+    - run: sudo apt-get install python3-venv
     - run: git config --global user.email "ask-cli-test@amazon.com"
     - run: git config --global user.name "Ask Cli Test"
     - run: npm install

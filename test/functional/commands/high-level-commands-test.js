@@ -2,6 +2,8 @@ const { expect } = require('chai');
 const parallel = require('mocha.parallel');
 const { run, KeySymbol, resetTempDirectory, getPathInTempDirectory, makeFolderInTempDirectory } = require('@test/test-utils');
 
+parallel.limit(2);
+
 parallel('high level commands test', () => {
     let cmd;
 
@@ -107,8 +109,8 @@ parallel('high level commands test', () => {
         expect(result).include('Skill infrastructures deployed successfully through @ask-cli/cfn-deployer');
     });
 
-    it('| should set up and deploy skill with lambda deployer', async () => {
-        const folderName = 'lambda-skill';
+    it('| should set up and deploy skill with lambda deployer for node', async () => {
+        const folderName = 'node-lambda-skill';
         // new
         let args = ['new'];
         const inputs = [
@@ -116,6 +118,56 @@ parallel('high level commands test', () => {
             { match: '? Choose a method to host your skill', input: `${KeySymbol.DOWN}${KeySymbol.DOWN}` },
             { match: '? Choose a template to start with' },
             { match: '? Please type in your skill name', input: folderName },
+            { match: '? Please type in your folder name', input: folderName }
+        ];
+
+        let result = await run(cmd, args, { inputs });
+
+        expect(result).include('Project initialized with deploy delegate "@ask-cli/lambda-deployer" successfully');
+
+        // deploy
+        const cwd = getPathInTempDirectory(folderName);
+        args = ['deploy'];
+
+        result = await run(cmd, args, { cwd });
+
+        expect(result).include('Skill infrastructures deployed successfully through @ask-cli/lambda-deployer');
+    });
+
+    it('| should set up and deploy skill with lambda deployer for python', async () => {
+        const folderName = 'python-lambda-skill';
+        // new
+        let args = ['new'];
+        const inputs = [
+            { match: '? Choose the programming language', input: `${KeySymbol.DOWN}` },
+            { match: '? Choose a method to host your skill', input: `${KeySymbol.DOWN}${KeySymbol.DOWN}` },
+            { match: '? Choose a template to start with' },
+            { match: '? Please type in your skill name' },
+            { match: '? Please type in your folder name', input: folderName }
+        ];
+
+        let result = await run(cmd, args, { inputs });
+
+        expect(result).include('Project initialized with deploy delegate "@ask-cli/lambda-deployer" successfully');
+
+        // deploy
+        const cwd = getPathInTempDirectory(folderName);
+        args = ['deploy'];
+
+        result = await run(cmd, args, { cwd });
+
+        expect(result).include('Skill infrastructures deployed successfully through @ask-cli/lambda-deployer');
+    });
+
+    it('| should set up and deploy skill with lambda deployer for java', async () => {
+        const folderName = 'java-lambda-skill';
+        // new
+        let args = ['new'];
+        const inputs = [
+            { match: '? Choose the programming language', input: `${KeySymbol.DOWN}${KeySymbol.DOWN}` },
+            { match: '? Choose a method to host your skill', input: `${KeySymbol.DOWN}${KeySymbol.DOWN}` },
+            { match: '? Choose a template to start with' },
+            { match: '? Please type in your skill name' },
             { match: '? Please type in your folder name', input: folderName }
         ];
 
