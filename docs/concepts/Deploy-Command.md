@@ -93,6 +93,44 @@ This deployer is implementing the idea of **Code as Infra** by using AWS CloudFo
   3. Based on the presense of stackId, the deployer will create/update AWS CloudFormation stack for each region. The creation of a stack usually takes some time as new infrastructures are being provisioned; while the update of a stack resource is much faster as the update is executed based on the changeset. Please read more about the [CloudFormation update](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html).
   4. Polling stack status and real-time display the latest event message. Provide detailed resource-level reason message if any deployment of resource fails.
 
+##### @ask-cli/cfn-deployer configuration options in ask-resources.json
+
+```json
+...
+"skillInfrastructure": {
+  "userConfig": {
+    "runtime": "nodejs10.x",
+    "handler": "index.handler",
+    "templatePath": "./infrastructure/cfn-deployer/skill-stack.yaml",
+    "awsRegion": "us-east-1",
+    "artifactsS3": {
+      "bucketName": "some-custom-bucket",
+      "bucketKey": "someKey.zip" 
+    },
+    "cfn": {
+      "parameters": {
+        "SomeUserParameter1Key": "some value",
+        "SomeUserParameter2Key": "anther value"
+      },
+      "capabilities": [
+        "CAPABILITY_NAMED_IAM"
+      ]
+    }
+  },
+  "type": "@ask-cli/cfn-deployer"
+}
+...
+```
+* `skillInfrastructure.artifactsS3.bucketName` - can be used to provide custom bucket name, otherwise ask cli will create a new bucket.
+
+* `skillInfrastructure.artifactsS3.bucketKey` - can be used to provide custom bucket object key.
+
+* `skillInfrastructure.cfn.parameters` - can be used to provide additional parameters to pass to the CloudFormation.
+
+* `skillInfrastructure.cfn.capabilities` - can be used to provide additional capabilities to pass to the CloudFormation. CAPABILITY_IAM capability is always passed by default.
+
+
+
 ## Other Concepts
 
 ### Track lastDeployHash
